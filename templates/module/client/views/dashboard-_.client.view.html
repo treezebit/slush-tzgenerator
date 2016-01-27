@@ -1,0 +1,33 @@
+<section class="row">
+    <div class="treeze-filter col-md-12">
+        <div class="treeze-filter-content">
+            <div class="col-md-2 col-sm-4 col-xs-12">
+                <div class="btn-group col-md-12 col-xs-12" style="margin-top: 1.5px;">
+                    <company-dropdown ng-init="pageFilter.CompanyId=''" />
+                </div>
+            </div>
+            <div class="navbar-left col-md-1 col-sm-3">
+                <div class="btn-group col-md-12 col-xs-12" style="margin-top: 1.5px;">
+                    <select class="form-control btn btn-default treeze-select" readable-date-select ng-model="pageFilter.Period" ng-change="showFilterDate()" />
+                </div>
+            </div>
+            <tz-date-picker />
+            <div class="form-group" style="padding-top: 8px;">
+                <span style="padding-left: 20px;"> <i class="fa fa-building-o"></i> <span ng-bind="!companyDetail.company && pageFilter.CompanyId == '' ? 'Selecione uma unidade'  : companyDetail.company" /> </span>
+                <span ng-if="currentSellerActive != null && currentSellerActive.length != 0" style="color: #808080; padding-left: 20px;"> <i class="fa fa-male"></i> <span ng-bind="currentSellerActive"></span> </span>
+            </div>
+            <div class="form-group" style="padding-top: 8px;">
+            </div>
+            <load-information-button />
+        </div>
+    </div>
+    <div class="content-scroll">
+        <div class="col-md-12" style=" margin-top:15px;">
+            <div class="col-md-12 col-xs-12  col-sm-12">
+                <div ng-repeat="item in widgets.items">
+
+                </div>
+            </div>
+        </div>
+    </div>
+</section>

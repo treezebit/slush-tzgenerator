@@ -16,7 +16,9 @@ var gulp = require('gulp'),
     _ = require('underscore.string'),
     inquirer = require('inquirer'),
     path = require('path'),
-    mkdirp = require('mkdirp');
+    mkdirp = require('mkdirp'),
+    inflections = require('inflection'),
+    rename = require('gulp-rename');
 
 function format(string) {
     var username = string.toLowerCase();
@@ -80,7 +82,7 @@ gulp.task('default', function (done) {
         name: 'moveon',
         message: 'Continue?'
     }];
-    //Ask
+
     inquirer.prompt(prompts,
         function (answers) {
             if (!answers.moveon) {
@@ -88,23 +90,29 @@ gulp.task('default', function (done) {
             }
             answers.appNameSlug = _.slugify(answers.appName);
 
-            console.log(answers.appName);
-            var str = '/modules/' + answers.appName + '/config';
-            console.log(str);
-            mkdirp('/modules/' + answers.appNameSlug + '/config');
-            mkdirp('/modules/' + answers.appNameSlug + '/controllers');
-            mkdirp('/modules/' + answers.appNameSlug + '/services');
-            mkdirp('/modules/' + answers.appNameSlug + '/directives');
+            answers.slugifiedPluralName = answers.appName; //inflections.pluralize(answers.appName);
 
-            gulp.src(__dirname + '/templates/**')
-                .pipe(template(answers))
+            mkdirp( answers.slugifiedPluralName );
+//            mkdirp( answers.slugifiedPluralName + '/client' );
+//            mkdirp( answers.slugifiedPluralName + '/client/config');
+//            mkdirp( answers.slugifiedPluralName + '/client/controllers');
+//            mkdirp( answers.slugifiedPluralName + '/client/services');
+//            mkdirp( answers.slugifiedPluralName + '/client/directives');
+
+            gulp.src(__dirname + '/templates/module/**')
+                .pipe( template(answers) )
+                .pipe( rename(function(file) {
+		                    if (file.basename.indexOf('_') == 0) {
+		                        file.basename = file.basename.replace('_',answers.slugifiedPluralName);
+		                    }
+		             }))
                 .pipe(rename(function (file) {
                     if (file.basename[0] === '_') {
                         file.basename = '.' + file.basename.slice(1);
                     }
                 }))
 //                .pipe(conflict('./'))
-                .pipe(gulp.dest('./'))
+                .pipe(gulp.dest('./' + answers.slugifiedPluralName + '/'))
                 .pipe(install())
                 .on('end', function () {
                     done();
